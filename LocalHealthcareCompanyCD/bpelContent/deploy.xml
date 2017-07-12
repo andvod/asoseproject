@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" 
+	xmlns:cdclient="http://eu.chorevolution.farmbusinessstartup/cdclient" 
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany" 
+	xmlns:cdregistryoffice="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice" 
+	xmlns:cdveterinary="http://eu.chorevolution.farmbusinessstartup/cdveterinary" 
+	xmlns:localhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/localhealthcarecompany">
+	
+  <process name="cdlocalhealthcarecompany:LocalHealthcareCompanyCD.bpel">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+    <provide partnerLink="bpelProcessPartner">
+      <service name="cdlocalhealthcarecompany:UserLocalHealthcareCompanyService" port="UserLocalHealthcareCompanyPort"/>
+    </provide>
+    <provide partnerLink="VeterinaryLocalHealthcareCompanyPT">
+      <service name="cdlocalhealthcarecompany:VeterinaryLocalHealthcareCompanyService" port="VeterinaryLocalHealthcareCompanyPort"/>
+    </provide>
+    <provide partnerLink="RegistryOfficeLocalHealthcareCompanyPT">
+      <service name="cdlocalhealthcarecompany:RegistryOfficeLocalHealthcareCompanyService" port="RegistryOfficeLocalHealthcareCompanyPort"/>
+    </provide>
+    <invoke partnerLink="LocalHealthcareCompanyPT">
+      <service name="localhealthcarecompany:LocalHealthcareCompanyService" port="LocalHealthcareCompanyPort"/>
+    </invoke>
+    <invoke partnerLink="LocalHealthcareCompanyVeterinaryPT">
+      <service name="cdveterinary:LocalHealthcareCompanyVeterinaryService" port="LocalHealthcareCompanyVeterinaryPort"/>
+    </invoke>
+    <invoke partnerLink="LocalHealthcareCompanyRegistryOfficePT">
+      <service name="cdregistryoffice:LocalHealthcareCompanyRegistryOfficeService" port="LocalHealthcareCompanyRegistryOfficePort"/>
+    </invoke>
+    <invoke partnerLink="LocalHealthcareCompanyUserPT">
+      <service name="cdclient:LocalHealthcareCompanyUserService" port="LocalHealthcareCompanyUserPort"/>
+    </invoke>
+  </process>
+</deploy>

@@ -1,0 +1,1 @@
+[-b, file:/C:/Users/HP/Desktop/Chor/workspace/RegistryOffice/src/main/resources/binding.xml, -faultSerialVersionUID, 1, -keep, -impl, -verbose, -p, eu.chorevolution.prosumer.registryoffice, file:/C:/Users/HP/Desktop/Chor/workspace/RegistryOffice/src/main/resources/RegistryOffice.wsdl]

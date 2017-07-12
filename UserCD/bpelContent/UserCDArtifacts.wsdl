@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:tns="http://eu.chorevolution.farmbusinessstartup/cdclient" 
+	targetNamespace="http://eu.chorevolution.farmbusinessstartup/cdclientArtifacts"
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany"
+	xmlns="http://schemas.xmlsoap.org/wsdl/">
+	<import location="cdUser.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdclient"/>
+	<import location="cdlocalhealthcarecompany.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany"/>
+  
+  <partnerLinkType name="UserPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype" >
+    <role name="UserPTRole" portType="tns:UserPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="UserLocalHealthcareCompanyPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="UserLocalHealthcareCompanyPTRole" portType="cdlocalhealthcarecompany:UserLocalHealthcareCompanyPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="LocalHealthcareCompanyUserPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="LocalHealthcareCompanyUserPTRole" portType="tns:LocalHealthcareCompanyUserPT"/>
+  </partnerLinkType>
+  
+</definitions>

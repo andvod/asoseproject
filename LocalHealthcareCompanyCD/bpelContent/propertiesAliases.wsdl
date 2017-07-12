@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany" 
+	xmlns:properties="http://eu.chorevolution.farmbusinessstartup/properties" 
+	xmlns:cdregistryoffice="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice" 
+	xmlns:tns="http://eu.chorevolution.farmbusinessstartup/propertiesAliases" 
+	xmlns:cduser="http://eu.chorevolution.farmbusinessstartup/cdclient"  
+	xmlns:cdveterinary="http://eu.chorevolution.farmbusinessstartup/cdveterinary" 
+	xmlns:vprop="http://docs.oasis-open.org/wsbpel/2.0/varprop" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	name="propertiesAliases" 
+	targetNamespace="http://eu.chorevolution.farmbusinessstartup/propertiesAliases">
+	
+  <import location="cdlocalhealthcarecompany.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany"/>
+  <import location="cdVeterinary.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdveterinary"/>
+  <import location="cdRegistryOffice.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice"/>
+  <import location="cduser.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdclient"/>
+  <vprop:propertyAlias messageType="cdlocalhealthcarecompany:farmBusinessStartupRequestMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+  <vprop:propertyAlias messageType="cdlocalhealthcarecompany:farmSiteInspectionResponseMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+  <vprop:propertyAlias messageType="cdlocalhealthcarecompany:farmRegistrationNotificationMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+  <vprop:propertyAlias messageType="cdveterinary:farmSiteInspectionRequestMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+  <vprop:propertyAlias messageType="cdveterinary:farmRegistrationNotificationMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+  <vprop:propertyAlias messageType="cdregistryoffice:farmOpeningNotificationMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+  <vprop:propertyAlias messageType="cduser:farmBusinessStartupResponseMessageRequest" part="parameters" propertyName="properties:chorID">
+    <vprop:query>choreographyId/choreographyId</vprop:query>
+  </vprop:propertyAlias>
+</definitions>

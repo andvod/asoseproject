@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" 
+	xmlns:cdregistryoffice="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice" 
+	xmlns:cdveterinary="http://eu.chorevolution.farmbusinessstartup/cdveterinary" 
+	xmlns:municipality="http://eu.chorevolution.farmbusinessstartup/services/municipality" 
+	xmlns:registryoffice="http://eu.chorevolution.farmbusinessstartup/registryoffice"
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany" 
+	xmlns:veterinaryregionalregister="http://eu.chorevolution.farmbusinessstartup/services/veterinaryregionalregister">
+	
+  <process name="cdregistryoffice:RegistryOfficeCD">
+    <process-events generate="all"/>
+    <provide partnerLink="bpelProcessPartner">
+      <service name="cdregistryoffice:LocalHealthcareCompanyRegistryOfficeService" port="LocalHealthcareCompanyRegistryOfficePort"/>
+    </provide>
+    <invoke partnerLink="RegistryOfficePT">
+      <service name="registryoffice:RegistryOfficeService" port="RegistryOfficePort"/>
+    </invoke>
+    <invoke partnerLink="MunicipalityPT">
+      <service name="municipality:MunicipalityService" port="MunicipalityPort"/>
+    </invoke>
+    <invoke partnerLink="VeterinaryRegionalRegisterPT">
+      <service name="veterinaryregionalregister:VeterinaryRegionalRegisterService" port="VeterinaryRegionalRegisterPort"/>
+    </invoke>
+    <invoke partnerLink="RegistryOfficeVeterinaryPT">
+      <service name="cdveterinary:RegistryOfficeVeterinaryService" port="RegistryOfficeVeterinaryPort"/>
+    </invoke>
+    <invoke partnerLink="RegistryOfficeLocalHealthcareCompanyPT">
+      <service name="cdlocalhealthcarecompany:RegistryOfficeLocalHealthcareCompanyService" port="RegistryOfficeLocalHealthcareCompanyPort"/>
+    </invoke>
+  </process>
+</deploy>

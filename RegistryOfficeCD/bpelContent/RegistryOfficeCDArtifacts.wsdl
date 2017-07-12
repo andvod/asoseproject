@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:tns="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice" 
+	targetNamespace="http://eu.chorevolution.farmbusinessstartup/cdregistryofficeArtifacts"
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany" 
+	xmlns:municipality="http://eu.chorevolution.farmbusinessstartup/services/municipality"
+	xmlns:registryoffice="http://eu.chorevolution.farmbusinessstartup/registryoffice"  
+	xmlns:cdveterinary="http://eu.chorevolution.farmbusinessstartup/cdveterinary" 
+	xmlns:veterinaryregionalregister="http://eu.chorevolution.farmbusinessstartup/services/veterinaryregionalregister"
+	xmlns="http://schemas.xmlsoap.org/wsdl/">
+	
+	<import location="cdRegistryOffice.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice"/>
+	<import location="registryoffice.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/registryoffice"/>
+    <import location="properties.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/properties"/>
+    <import location="propertiesAliases.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/propertiesAliases"/>
+    <import location="municipality.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/services/municipality"/>
+    <import location="cdVeterinary.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdveterinary"/>
+    <import location="veterinaryregionalregister.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/services/veterinaryregionalregister"/>
+    <import location="cdlocalhealthcarecompany.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany"/>
+  
+  
+  <partnerLinkType name="LocalHealthcareCompanyRegistryOfficePTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="LocalHealthcareCompanyRegistryOfficePTRole" portType="tns:LocalHealthcareCompanyRegistryOfficePT"/>
+  </partnerLinkType>
+  <partnerLinkType name="LocalHealthcareCompanyVeterinaryPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="LocalHealthcareCompanyVeterinaryPTRole" portType="cdveterinary:LocalHealthcareCompanyVeterinaryPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="RegistryOfficeVeterinaryPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="RegistryOfficeVeterinaryPTRole" portType="cdveterinary:RegistryOfficeVeterinaryPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="RegistryOfficePTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="RegistryOfficePTRole" portType="registryoffice:RegistryOfficePT"/>
+  </partnerLinkType>
+  <partnerLinkType name="VeterinaryRegionalRegisterPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="VeterinaryRegionalRegisterPTRole" portType="veterinaryregionalregister:VeterinaryRegionalRegisterPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="MunicipalityPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="MunicipalityPTRole" portType="municipality:MunicipalityPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="RegistryOfficeLocalHealthcareCompanyPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="RegistryOfficeLocalHealthcareCompanyPTRole" portType="cdlocalhealthcarecompany:RegistryOfficeLocalHealthcareCompanyPT"/>
+  </partnerLinkType>
+  </definitions>

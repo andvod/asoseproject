@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" 
+	xmlns:cdveterinary="http://eu.chorevolution.farmbusinessstartup/cdveterinary" 
+	xmlns:veterinary="http://eu.chorevolution.farmbusinessstartup/veterinary"
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany">
+  <process name="cdveterinary:veterinaryCD">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+    <provide partnerLink="bpelProcessPartner">
+      <service name="cdveterinary:LocalHealthcareCompanyVeterinaryService" port="LocalHealthcareCompanyVeterinaryPort"/>
+    </provide>
+    <provide partnerLink="RegistryOfficeVeterinaryPT">
+      <service name="cdveterinary:RegistryOfficeVeterinaryService" port="RegistryOfficeVeterinaryPort"/>
+    </provide>
+    <invoke partnerLink="VeterinaryPT">
+      <service name="veterinary:VeterinaryService" port="VeterinaryPort"/>
+    </invoke>
+    <invoke partnerLink="VeterinaryLocalHealthcareCompanyPT">
+      <service name="cdlocalhealthcarecompany:VeterinaryLocalHealthcareCompanyService" port="VeterinaryLocalHealthcareCompanyPort"/>
+    </invoke>
+  </process>
+</deploy>

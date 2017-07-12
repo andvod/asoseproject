@@ -1,0 +1,1 @@
+[-b, file:/C:/Users/HP/Desktop/Chor/workspace/Veterinary/src/main/resources/binding.xml, -faultSerialVersionUID, 1, -keep, -impl, -verbose, -p, eu.chorevolution.prosumer.veterinary, file:/C:/Users/HP/Desktop/Chor/workspace/Veterinary/src/main/resources/Veterinary.wsdl]

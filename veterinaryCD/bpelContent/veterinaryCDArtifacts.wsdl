@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<definitions xmlns:tns="http://eu.chorevolution.farmbusinessstartup/cdveterinary" 
+	targetNamespace="http://eu.chorevolution.farmbusinessstartup/cdveterinaryArtifacts" 
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:veterinary="http://eu.chorevolution.farmbusinessstartup/veterinary"
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany">
+	
+	<import location="cdVeterinary.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdveterinary"/>
+    <import location="veterinary.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/veterinary"/>
+    <import location="cdlocalhealthcarecompany.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany"/>
+	
+  <partnerLinkType name="LocalHealthcareCompanyVeterinaryPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="LocalHealthcareCompanyVeterinaryPTRole" portType="tns:LocalHealthcareCompanyVeterinaryPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="VeterinaryPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="VeterinaryPTRole" portType="veterinary:VeterinaryPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="VeterinaryLocalHealthcareCompanyPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="VeterinaryLocalHealthcareCompanyPTRole" portType="cdlocalhealthcarecompany:VeterinaryLocalHealthcareCompanyPT"/>
+  </partnerLinkType>
+  <partnerLinkType name="RegistryOfficeVeterinaryPTPLT" xmlns="http://docs.oasis-open.org/wsbpel/2.0/plnktype">
+    <role name="RegistryOfficeVeterinaryPTRole" portType="tns:RegistryOfficeVeterinaryPT"/>
+  </partnerLinkType>
+ 
+</definitions>

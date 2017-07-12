@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<deploy xmlns="http://www.apache.org/ode/schemas/dd/2007/03" xmlns:cdclient="http://eu.chorevolution.farmbusinessstartup/cdclient" xmlns:cdmainbpel="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany">
+  <process name="cdclient:UserCD.bpel">
+    <active>true</active>
+    <retired>false</retired>
+    <process-events generate="all"/>
+    <provide partnerLink="bpelProcessPartner">
+      <service name="cdclient:UserService" port="UserPort"/>
+    </provide>
+    <provide partnerLink="LocalHealthcareCompanyUserPT">
+      <service name="cdclient:LocalHealthcareCompanyUserService" port="LocalHealthcareCompanyUserPort"/>
+    </provide>
+    <invoke partnerLink="UserLocalHealthcareCompanyPT">
+      <service name="cdmainbpel:UserLocalHealthcareCompanyService" port="UserLocalHealthcareCompanyPort"/>
+    </invoke>
+  </process>
+</deploy>

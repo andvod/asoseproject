@@ -1,0 +1,843 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpel:process exitOnStandardFault="yes" name="RegistryOfficeCD"
+    targetNamespace="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice"
+    xmlns:bpel="http://docs.oasis-open.org/wsbpel/2.0/process/executable"
+    xmlns:ns="http://eu.chorevolution.farmbusinessstartup/cdregistryofficeArtifacts" 
+    xmlns:ns0="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice"
+    xmlns:properties="http://eu.chorevolution.farmbusinessstartup/properties" 
+	xmlns:registryoffice="http://eu.chorevolution.farmbusinessstartup/registryoffice" 
+	xmlns:cdveterinary="http://eu.chorevolution.farmbusinessstartup/cdveterinary"
+	xmlns:veterinaryregionalregister="http://eu.chorevolution.farmbusinessstartup/services/veterinaryregionalregister"
+	xmlns:municipality="http://eu.chorevolution.farmbusinessstartup/services/municipality"
+	xmlns:cdlocalhealthcarecompany="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="cdRegistryOffice.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdregistryoffice"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/"
+        location="RegistryOfficeCDArtifacts.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdregistryofficeArtifacts"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="registryoffice.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/registryoffice"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="properties.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/properties"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="propertiesAliases.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/propertiesAliases"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="municipality.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/services/municipality"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="cdVeterinary.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/cdveterinary"/>
+    <bpel:import importType="http://schemas.xmlsoap.org/wsdl/" location="veterinaryregionalregister.wsdl" namespace="http://eu.chorevolution.farmbusinessstartup/services/veterinaryregionalregister"/>
+  
+    <bpel:partnerLinks>
+        <bpel:partnerLink
+            myRole="LocalHealthcareCompanyRegistryOfficePTRole"
+            name="bpelProcessPartner" partnerLinkType="ns:LocalHealthcareCompanyRegistryOfficePTPLT"/>
+        <bpel:partnerLink name="RegistryOfficePT" partnerLinkType="ns:RegistryOfficePTPLT" partnerRole="RegistryOfficePTRole"/>
+    	<bpel:partnerLink name="MunicipalityPT" partnerLinkType="ns:MunicipalityPTPLT" partnerRole="MunicipalityPTRole"/>
+    	<bpel:partnerLink name="VeterinaryRegionalRegisterPT" partnerLinkType="ns:VeterinaryRegionalRegisterPTPLT" partnerRole="VeterinaryRegionalRegisterPTRole"/>
+    	<bpel:partnerLink name="RegistryOfficeVeterinaryPT" partnerLinkType="ns:RegistryOfficeVeterinaryPTPLT" partnerRole="RegistryOfficeVeterinaryPTRole"/>
+    	<bpel:partnerLink name="RegistryOfficeLocalHealthcareCompanyPT" partnerLinkType="ns:RegistryOfficeLocalHealthcareCompanyPTPLT" partnerRole="RegistryOfficeLocalHealthcareCompanyPTRole"/>
+    	
+    	
+    </bpel:partnerLinks>
+    <bpel:variables>
+        <bpel:variable
+            messageType="ns0:farmOpeningNotificationMessageRequest" name="farmOpeningRequest"/>
+            
+    	<bpel:variable messageType="registryoffice:farmOpeningNotificationMessageRequest" name="registryOffice_farmOpening_Input"/>
+    	<bpel:variable messageType="registryoffice:farmOpeningNotificationMessageResponse" name="registryOffice_farmOpening_Output"/>
+    
+    	
+	    <bpel:variable messageType="registryoffice:farmRegistrationRequestMessageRequest" name="registryOffice_farmRegistrationRequest_Input"/>
+	    <bpel:variable messageType="registryoffice:farmRegistrationRequestMessageResponse" name="registryOffice_farmRegistrationRequest_Output"/>
+	    
+	    <bpel:variable messageType="veterinaryregionalregister:farmRegistrationRequestMessageRequest" name="veterinaryRegionalRegister_farmRegistration_Input"/>
+	    <bpel:variable messageType="veterinaryregionalregister:farmRegistrationResponseMessageResponse" name="veterinaryRegionalRegister_farmRegistration_Output"/>
+	    
+	    <bpel:variable messageType="registryoffice:receiveFarmRegistrationResponseMessageRequest" name="registryOffice_receiveFarmRegistrationResponse_Input"/>
+	    <bpel:variable messageType="registryoffice:receiveFarmRegistrationResponseMessageResponse" name="registryOffice_receiveFarmRegistrationResponse_Output"/>
+	    
+	    <bpel:variable messageType="registryoffice:farmRegistrationNotificationMessageRequest" name="registryOffice_farmRegistrationNotification_Input"/>
+	    <bpel:variable messageType="registryoffice:farmRegistrationNotificationMessageResponse" name="registryOffice_farmRegistrationNotification_Output"/>
+	    
+	    <bpel:variable messageType="cdveterinary:farmRegistrationNotificationMessageRequest" name="cdveterinary_farmHealthcareRegistration_Input"/>
+	    
+	    <bpel:variable messageType="registryoffice:farmBusinessCodeStartupNotificationMessageRequest" name="registryOffice_farmBusinessCodeStartupNotification_Input"/>
+	    <bpel:variable messageType="registryoffice:farmBusinessCodeStartupNotificationMessageResponse" name="registryOffice_farmBusinessCodeStartupNotification_Output"/>
+	    
+	    <bpel:variable messageType="municipality:farmBusinessCodeStartupNotificationMessageRequest" name="municipality_farmBusinessCodeStartupNotification_Input"/>
+	    
+	    <bpel:variable messageType="cdlocalhealthcarecompany:farmRegistrationNotificationMessageRequest" name="cdlocalHealthcareCompany_farmBusinessStartupNotification"/>
+    
+	    
+	    <bpel:variable name="choreographyID" type="xsd:string"/>
+	    <bpel:variable name="LocalHealthcareCompany_participant_name" type="xsd:string"/>
+	    <bpel:variable name="RegistryOffice_participant_name" type="xsd:string"/>
+	    <bpel:variable name="Veterinary_participant_name" type="xsd:string"/>
+	    <bpel:variable name="VeterinaryRegionalRegister_participant_name" type="xsd:string"/>
+	    <bpel:variable name="Municipality_participant_name" type="xsd:string"/>
+
+    
+    </bpel:variables>
+    
+    <bpel:correlationSets>
+	    <bpel:correlationSet name="CorrelationSetChoreographyID" properties="properties:chorID"/>
+	  </bpel:correlationSets>
+    
+    <bpel:sequence name="MainSequence">
+        <bpel:pick createInstance="yes" name="SwitchInvokedOperation">
+            <bpel:onMessage operation="farmOpening"
+                partnerLink="bpelProcessPartner"
+                portType="ns0:LocalHealthcareCompanyRegistryOfficePT" variable="farmOpeningRequest">
+                <bpel:correlations>
+		          <bpel:correlation initiate="join" set="CorrelationSetChoreographyID" />
+		        </bpel:correlations>
+                <bpel:sequence>
+                
+                <bpel:assign name="Assign_choreographyID" validate="no">
+		            <bpel:copy>
+		              <bpel:from part="parameters" variable="farmOpeningRequest">
+		                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+		              </bpel:from>
+		              <bpel:to variable="choreographyID" />
+		            </bpel:copy>
+		         </bpel:assign>
+		         
+		          <bpel:assign name="Assign_LocalHealthcareCompany_participant_name" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Local Healthcare Company</bpel:literal>
+              </bpel:from>
+              <bpel:to variable="LocalHealthcareCompany_participant_name" />
+            </bpel:copy>
+          </bpel:assign>
+          
+          <bpel:assign name="Assign_Veterinary_participant_name" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Veterinary</bpel:literal>
+              </bpel:from>
+              <bpel:to variable="Veterinary_participant_name" />
+            </bpel:copy>
+          </bpel:assign> 
+          
+          <bpel:assign name="Assign_RegistryOffice_participant_name" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Registry Office</bpel:literal>
+              </bpel:from>
+              <bpel:to variable="RegistryOffice_participant_name" />
+            </bpel:copy>
+          </bpel:assign>
+          
+          <bpel:assign name="Assign_VeterinaryRegionalRegister_participant_name" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Veterinary Regional Register</bpel:literal>
+              </bpel:from>
+              <bpel:to variable="VeterinaryRegionalRegister_participant_name"/>
+            </bpel:copy>
+          </bpel:assign>
+          
+          <bpel:assign name="Assign_Municipality_participant_name" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Municipality</bpel:literal>
+              </bpel:from>
+              <bpel:to variable="Municipality_participant_name"/>
+            </bpel:copy>
+          </bpel:assign>
+                
+          <bpel:assign name="Assign_registryOffice_farmOpening_Input" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>
+                  <ns:farmOpeningNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/registryoffice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+    <inputMessageData>
+        <farmOpeningRequestForm>
+            <owner>
+                <name>name1</name>
+                <surname>surname1</surname>
+                <address>
+                    <city>city1</city>
+                    <street>street1</street>
+                    <postcode>1548954897</postcode>
+                </address>
+                <phoneNumber>phoneNumber1</phoneNumber>
+                <email>email1</email>
+                <fiscalCode>fiscalCode1</fiscalCode>
+            </owner>
+            <farm>
+                <farmName>farmName1</farmName>
+                <companyName>companyName1</companyName>
+                <companyType>individual company</companyType>
+                <companyHeadquarter>
+                    <city>city2</city>
+                    <street>street2</street>
+                    <postcode>1974884504</postcode>
+                </companyHeadquarter>
+                <farmSurface>-1028162454</farmSurface>
+                <phoneNumber>phoneNumber2</phoneNumber>
+                <email>email2</email>
+                <vatNumber>vatNumber1</vatNumber>
+                <productionType>fattening calf white meat</productionType>
+                <breedingMethodologyType>intensive</breedingMethodologyType>
+            </farm>
+        </farmOpeningRequestForm>
+        <siteInspectionDetails>
+            <veterinaryName>veterinaryName1</veterinaryName>
+            <veterinarySurname>veterinarySurname1</veterinarySurname>
+            <siteAddress>
+                <city>city3</city>
+                <street>street3</street>
+                <postcode>1850953776</postcode>
+            </siteAddress>
+            <farmSurface>920016374</farmSurface>
+            <productionType>fattening for self-consumption</productionType>
+            <breedingMethodologyType>free-range intensive</breedingMethodologyType>
+            <siteInspectionDate>2017-05-30</siteInspectionDate>
+            <referenceLegislation>referenceLegislation1</referenceLegislation>
+        </siteInspectionDetails>
+    </inputMessageData>
+</ns:farmOpeningNotificationElementRequest>
+</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input" />
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from variable="choreographyID" />
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>LocalHealthcareCompany</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Registry Office</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Farm Opening</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>farmOpeningNotification</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from part="parameters" variable="farmOpeningRequest">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmOpening_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+          </bpel:assign>
+          
+          
+          <bpel:invoke inputVariable="registryOffice_farmOpening_Input" name="Invoke_registryOffice_farmOpening" operation="farmOpening" outputVariable="registryOffice_farmOpening_Output" partnerLink="RegistryOfficePT" />
+          
+          <bpel:assign name="Assign_registryOffice_farmRegistrationRequest_Input" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>
+                  <ns:farmRegistrationRequestElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/registryoffice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+</ns:farmRegistrationRequestElementRequest>
+</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmRegistrationRequest_Input" />
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from variable="choreographyID" />
+              <bpel:to part="parameters" variable="registryOffice_farmRegistrationRequest_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from variable="RegistryOffice_participant_name" />
+              <bpel:to part="parameters" variable="registryOffice_farmRegistrationRequest_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Veterinary Regional Register</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmRegistrationRequest_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Farm Registration</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmRegistrationRequest_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>farmRegistrationRequest</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_farmRegistrationRequest_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+          </bpel:assign>
+         
+          
+          <bpel:invoke inputVariable="registryOffice_farmRegistrationRequest_Input" name="Invoke_registryOffice_farmRegistrationRequest" operation="farmRegistrationRequest" outputVariable="registryOffice_farmRegistrationRequest_Output" partnerLink="RegistryOfficePT" />
+          
+          <bpel:assign name="Assign_veterinaryRegionalRegister_farmRegistration_Input" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>
+                  <ns:farmRegistrationRequestElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/services/veterinaryregionalregister" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <owner>
+        <name>name1</name>
+        <surname>surname1</surname>
+        <address>
+            <city>city1</city>
+            <street>street1</street>
+            <postcode>427777881</postcode>
+        </address>
+        <phoneNumber>phoneNumber1</phoneNumber>
+        <email>email1</email>
+        <fiscalCode>fiscalCode1</fiscalCode>
+    </owner>
+    <farm>
+        <farmName>farmName1</farmName>
+        <companyName>companyName1</companyName>
+        <companyType>partnership</companyType>
+        <companyHeadquarter>
+            <city>city2</city>
+            <street>street2</street>
+            <postcode>-415274844</postcode>
+        </companyHeadquarter>
+        <farmSurface>-111160078</farmSurface>
+        <phoneNumber>phoneNumber2</phoneNumber>
+        <email>email2</email>
+        <vatNumber>vatNumber1</vatNumber>
+        <productionType>fattening for self-consumption</productionType>
+        <breedingMethodologyType>intensive</breedingMethodologyType>
+    </farm>
+    <siteInspectionDetails>
+        <veterinaryName>veterinaryName1</veterinaryName>
+        <veterinarySurname>veterinarySurname1</veterinarySurname>
+        <siteAddress>
+            <city>city3</city>
+            <street>street3</street>
+            <postcode>2027474286</postcode>
+        </siteAddress>
+        <farmSurface>2039544307</farmSurface>
+        <productionType>fattening for self-consumption</productionType>
+        <breedingMethodologyType>transhumant</breedingMethodologyType>
+        <siteInspectionDate>2017-05-30</siteInspectionDate>
+        <referenceLegislation>referenceLegislation1</referenceLegislation>
+    </siteInspectionDetails>
+</ns:farmRegistrationRequestElementRequest>
+</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="veterinaryRegionalRegister_farmRegistration_Input" />
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from part="parameters" variable="registryOffice_farmRegistrationRequest_Output">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:from>
+              <bpel:to part="parameters" variable="veterinaryRegionalRegister_farmRegistration_Input" />
+            </bpel:copy>
+          </bpel:assign>
+
+          <bpel:invoke inputVariable="veterinaryRegionalRegister_farmRegistration_Input" name="Invoke_veterinaryRegionalRegister_farmRegistration" operation="farmRegistration" outputVariable="veterinaryRegionalRegister_farmRegistration_Output" partnerLink="VeterinaryRegionalRegisterPT"/>
+          
+          <bpel:assign name="Assign_registryOffice_receiveFarmRegistrationResponse_Input" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>
+                  <ns:receiveFarmRegistrationResponseElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/registryoffice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <outputMessageName>outputMessageName1</outputMessageName>
+    <outputMessageData>
+        <farmCode>farmCode1</farmCode>
+    </outputMessageData>
+</ns:receiveFarmRegistrationResponseElementRequest>
+</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input" />
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from variable="choreographyID" />
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Veterinary Regional Register</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Registry Office</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Farm Registration</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>farmRegistrationResponse</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[outputMessageName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from part="parameters" variable="veterinaryRegionalRegister_farmRegistration_Output" />
+              <bpel:to part="parameters" variable="registryOffice_receiveFarmRegistrationResponse_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[outputMessageData]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+          </bpel:assign>
+          
+          <bpel:invoke inputVariable="registryOffice_receiveFarmRegistrationResponse_Input" name="Invoke_registryOffice_receiveFarmRegistrationResponse" operation="receiveFarmRegistrationResponse" outputVariable="registryOffice_receiveFarmRegistrationResponse_Output" partnerLink="RegistryOfficePT" />
+          
+         <bpel:flow> 
+           <bpel:sequence name="Sequence_FLow_0">
+
+              <bpel:assign name="Assign_registryOffice_farmRegistrationNotification_Input" validate="no">
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>
+                      <ns:farmRegistrationNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/registryoffice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+</ns:farmRegistrationNotificationElementRequest>
+</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input" />
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from variable="choreographyID" />
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Registry Office</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Veterinary</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Farm Healthcare Registration</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>farmRegistrationNotification</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+              </bpel:assign>
+	          
+              <bpel:invoke inputVariable="registryOffice_farmRegistrationNotification_Input" name="Invoke_registryOffice_farmRegistrationNotification" operation="farmRegistrationNotification" outputVariable="registryOffice_farmRegistrationNotification_Output" partnerLink="RegistryOfficePT" />
+              
+          <bpel:assign name="Assign_cdveterinary_farmHealthcareRegistration_Input" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>
+                  <ns:farmRegistrationNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/cdveterinary" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+    <inputMessageData>
+        <farmCode>farmCode1</farmCode>
+        <farmName>farmName1</farmName>
+        <siteAddress>
+            <city>city1</city>
+            <street>street1</street>
+            <postcode>-1072793999</postcode>
+        </siteAddress>
+        <farmSurface>123706432</farmSurface>
+        <productionType>fattening for self-consumption</productionType>
+        <breedingMethodologyType>free-range intensive</breedingMethodologyType>
+    </inputMessageData>
+</ns:farmRegistrationNotificationElementRequest>
+</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input" />
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from variable="choreographyID" />
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>         
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Registry Office</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Veterinary</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                 <bpel:literal>Farm Healthcare Registration</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>farmRegistrationNotification</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from part="parameters" variable="registryOffice_farmRegistrationNotification_Output">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdveterinary_farmHealthcareRegistration_Input">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+          </bpel:assign>
+          
+          <bpel:invoke inputVariable="cdveterinary_farmHealthcareRegistration_Input" name="Invoke_cdveterinary_farmHealthcareRegistration" operation="farmHealthcareRegistration" partnerLink="RegistryOfficeVeterinaryPT">
+	          <bpel:correlations>
+		            <bpel:correlation initiate="join" set="CorrelationSetChoreographyID"/>
+		            </bpel:correlations>
+		  </bpel:invoke>
+        
+        </bpel:sequence>
+        <bpel:sequence name="Sequence_FLow_1">
+              <bpel:assign name="Assign_registryOffice_farmBusinessCodeStartupNotification_Input" validate="no">
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>
+                      <ns:farmBusinessCodeStartupNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/registryoffice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+</ns:farmBusinessCodeStartupNotificationElementRequest>
+</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Input" />
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from variable="choreographyID" />
+                  <bpel:to part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from variable="RegistryOffice_participant_name" />
+                  <bpel:to part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Municipality</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Farm Business Code Startup Notification</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>farmBusinessCodeStartupNotification</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+              </bpel:assign>
+              
+              <bpel:invoke inputVariable="registryOffice_farmBusinessCodeStartupNotification_Input" name="Invoke_registryOffice_farmBusinessCodeStartupNotification" operation="farmBusinessCodeStartupNotification" outputVariable="registryOffice_farmBusinessCodeStartupNotification_Output" partnerLink="RegistryOfficePT"/>
+              
+              <bpel:assign name="Assign_municipality_farmBusinessCodeStartupNotification_Input" validate="no">
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>
+                      <ns:farmBusinessCodeStartupNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/services/municipality" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <farmCode>farmCode1</farmCode>
+    <farm>
+        <farmName>farmName1</farmName>
+        <companyName>companyName1</companyName>
+        <companyType>partnership</companyType>
+        <companyHeadquarter>
+            <city>city1</city>
+            <street>street1</street>
+            <postcode>-21095418</postcode>
+        </companyHeadquarter>
+        <farmSurface>2127642674</farmSurface>
+        <phoneNumber>phoneNumber1</phoneNumber>
+        <email>email1</email>
+        <vatNumber>vatNumber1</vatNumber>
+        <productionType>fattening for self-consumption</productionType>
+        <breedingMethodologyType>intensive</breedingMethodologyType>
+    </farm>
+</ns:farmBusinessCodeStartupNotificationElementRequest>
+</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="municipality_farmBusinessCodeStartupNotification_Input" />
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from part="parameters" variable="registryOffice_farmBusinessCodeStartupNotification_Output">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="municipality_farmBusinessCodeStartupNotification_Input" />
+                </bpel:copy>
+              </bpel:assign>
+              
+              <bpel:invoke inputVariable="municipality_farmBusinessCodeStartupNotification_Input" name="Invoke_municipality_farmBusinessCodeStartupNotification" operation="farmBusinessCodeStartupNotification" partnerLink="MunicipalityPT" />
+              
+            </bpel:sequence>
+            <bpel:sequence name="Sequence_FLow_2">
+            
+              <bpel:assign name="Assign_registryOffice_farmRegistrationNotification_Input" validate="no">
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>
+                      <ns:farmRegistrationNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/registryoffice" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+</ns:farmRegistrationNotificationElementRequest>
+</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input" />
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from variable="choreographyID" />
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+	                <bpel:literal>Registry Office</bpel:literal>
+	              </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Local Healthcare Company</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>Farm Business Startup Notification</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+                <bpel:copy>
+                  <bpel:from>
+                    <bpel:literal>farmRegistrationNotification</bpel:literal>
+                  </bpel:from>
+                  <bpel:to part="parameters" variable="registryOffice_farmRegistrationNotification_Input">
+                    <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+                  </bpel:to>
+                </bpel:copy>
+              </bpel:assign>
+               
+              <bpel:invoke inputVariable="registryOffice_farmRegistrationNotification_Input" name="Invoke_registryOffice_farmRegistrationNotification" operation="farmRegistrationNotification" outputVariable="registryOffice_farmRegistrationNotification_Output" partnerLink="RegistryOfficePT" />
+              
+          <bpel:assign name="Assign_cdlocalHealthcareCompany_farmBusinessStartupNotification" validate="no">
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>
+                  <ns:farmRegistrationNotificationElementRequest xmlns:ns="http://eu.chorevolution.farmbusinessstartup/cdlocalhealthcarecompany" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <choreographyId>
+        <choreographyId>choreographyId1</choreographyId>
+    </choreographyId>
+    <senderParticipantName>senderParticipantName1</senderParticipantName>
+    <receiverParticipantName>receiverParticipantName1</receiverParticipantName>
+    <choreographyTaskName>choreographyTaskName1</choreographyTaskName>
+    <inputMessageName>inputMessageName1</inputMessageName>
+    <inputMessageData>
+        <farmCode>farmCode1</farmCode>
+        <farmName>farmName1</farmName>
+        <siteAddress>
+            <city>city1</city>
+            <street>street1</street>
+            <postcode>874257265</postcode>
+        </siteAddress>
+        <farmSurface>-691134364</farmSurface>
+        <productionType>fattening for self-consumption</productionType>
+        <breedingMethodologyType>free-range intensive</breedingMethodologyType>
+    </inputMessageData>
+</ns:farmRegistrationNotificationElementRequest>
+</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification" />
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from variable="choreographyID" />
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyId/choreographyId]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Registry Office</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[senderParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Local Healthcare Company</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[receiverParticipantName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>Farm Business Startup Notification</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[choreographyTaskName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from>
+                <bpel:literal>farmRegistrationNotification</bpel:literal>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageName]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+            <bpel:copy>
+              <bpel:from part="parameters" variable="registryOffice_farmRegistrationNotification_Output">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:from>
+              <bpel:to part="parameters" variable="cdlocalHealthcareCompany_farmBusinessStartupNotification">
+                <bpel:query queryLanguage="urn:oasis:names:tc:wsbpel:2.0:sublang:xpath1.0"><![CDATA[inputMessageData]]></bpel:query>
+              </bpel:to>
+            </bpel:copy>
+          </bpel:assign>
+            
+          <bpel:invoke inputVariable="cdlocalHealthcareCompany_farmBusinessStartupNotification" name="Invoke_cdlocalHealthcareCompany_farmBusinessStartupNotification" operation="farmBusinessStartupNotification" partnerLink="RegistryOfficeLocalHealthcareCompanyPT">
+          		<bpel:correlations>
+		          <bpel:correlation initiate="join" set="CorrelationSetChoreographyID" />
+		        </bpel:correlations>
+          </bpel:invoke>
+              
+              </bpel:sequence>
+
+        </bpel:flow>
+          
+          </bpel:sequence>
+          
+            </bpel:onMessage>
+        </bpel:pick>
+    </bpel:sequence>
+</bpel:process>
